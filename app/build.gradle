@@ -43,7 +43,6 @@ dependencies {
     // adding these libraries to fix gradle conflicts
     implementation 'com.android.support:recyclerview-v7:28.0.0'
 
-
     // Add the paging library
     implementation 'android.arch.paging:runtime:1.0.1'
 
