@@ -1,7 +1,8 @@
-package moviedb.com.moviedb
+package moviedb.com.moviedb.views.activities
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import moviedb.com.moviedb.R
 
 class ListActivity : AppCompatActivity() {
 
