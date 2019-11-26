@@ -1,9 +1,9 @@
-package moviedb.com.moviedb.models.entities
+package moviedb.com.moviedb.data.pojos
 
 
 import com.google.gson.annotations.SerializedName
 
-data class Person(
+data class PersonEntity(
     val adult: Boolean,
     val gender: Int,
     val id: Int,

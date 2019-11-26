@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit
 
 /** created to provide popular people client **/
 object PopularPeopleClient {
-    fun getClient() : PopularPeopleInterface{
+    fun getClient() : PopularPeopleService{
         val requestInterceptor = Interceptor {chain ->
 
             // as all requests will contain api key as query parameter , so I added it to all popular people client requests
@@ -45,6 +45,6 @@ object PopularPeopleClient {
             .addConverterFactory(GsonConverterFactory.create())
             .client(okHttpClient)
             .build()
-            .create(PopularPeopleInterface::class.java)
+            .create(PopularPeopleService::class.java)
     }
 }

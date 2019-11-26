@@ -1,6 +1,6 @@
-package moviedb.com.moviedb.views.activities
+package moviedb.com.moviedb.ui.activities
 
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import moviedb.com.moviedb.R
 

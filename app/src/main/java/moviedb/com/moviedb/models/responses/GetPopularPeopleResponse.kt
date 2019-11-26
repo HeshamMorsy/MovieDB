@@ -1,7 +1,7 @@
 package moviedb.com.moviedb.models.responses
 
 import com.google.gson.annotations.SerializedName
-import moviedb.com.moviedb.models.entities.Person
+import moviedb.com.moviedb.data.pojos.PersonEntity
 
 data class GetPopularPeopleResponse (
     @SerializedName("total_results")
@@ -10,5 +10,5 @@ data class GetPopularPeopleResponse (
     val totalPages: Int,
     val page: Int,
     @SerializedName("results")
-    val peopleList: ArrayList<Person>
+    val peopleList: ArrayList<PersonEntity>
 )
