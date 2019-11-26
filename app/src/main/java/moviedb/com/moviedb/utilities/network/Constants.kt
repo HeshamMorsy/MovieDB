@@ -11,5 +11,9 @@ class Constants {
 
         const val FIRST_PAGE = 1
         const val PER_PAGE = 20
+        const val IMAGE_BASE_URL = "https://image.tmdb.org/t/p/"
+        const val IMAGE_ORIGINAL_SIZE = "original"
+        const val IMAGE_LIST_SIZE = "w92"
+
     }
 }
