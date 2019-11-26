@@ -9,5 +9,6 @@ data class GetPopularPeopleResponse (
     @SerializedName("total_pages")
     val totalPages: Int,
     val page: Int,
-    val results: ArrayList<Person>
+    @SerializedName("results")
+    val peopleList: ArrayList<Person>
 )

@@ -9,5 +9,7 @@ class Constants {
 
         const val CONTENT_TYPE = "application/json;charset=utf-8"
 
+        const val FIRST_PAGE = 1
+        const val PER_PAGE = 20
     }
 }

@@ -7,8 +7,5 @@ import retrofit2.http.Query
 
 interface PopularPeopleInterface {
     @GET("person/popular")
-    fun getPopularPeople(
-        @Query("api_key") apiKey: String,
-        @Query("page") page: Int
-    ): Single<GetPopularPeopleResponse>
+    fun getPopularPeople(@Query("page") page: Int): Single<GetPopularPeopleResponse>
 }
