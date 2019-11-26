@@ -10,14 +10,14 @@ import retrofit2.converter.gson.GsonConverterFactory
 /**
  * This class is used to connect to movieDB api
  */
-class RetrofitCreation {
+class RetrofitFactory {
 
     companion object {
         private lateinit var retrofit: Retrofit
         private lateinit var logging: HttpLoggingInterceptor
         private lateinit var httpClient: OkHttpClient.Builder
 
-        fun createRetrofit(): Retrofit {
+        public fun createRetrofit(): Retrofit {
             logging = HttpLoggingInterceptor()
             logging.level = HttpLoggingInterceptor.Level.BODY
             httpClient = OkHttpClient.Builder()
