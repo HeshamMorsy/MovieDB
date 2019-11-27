@@ -18,6 +18,10 @@ class ListViewModel(private val peopleRepository: PeoplePagedListRepository) : V
         peopleRepository.getNetworkState()
     }
 
+    fun refresh(){
+        peoplePagedList.value?.dataSource?.invalidate()
+    }
+
     fun listIsEmpty() : Boolean{
         return peoplePagedList.value?.isEmpty() ?: true
     }

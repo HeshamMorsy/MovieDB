@@ -11,10 +11,11 @@ import moviedb.com.moviedb.data.repository.NetworkState
 import moviedb.com.moviedb.data.repository.PeopleDataSource
 import moviedb.com.moviedb.data.repository.PeopleDataSourceFactory
 import moviedb.com.moviedb.utilities.network.Constants.Companion.PER_PAGE
+import java.util.concurrent.Executors
 
 class PeoplePagedListRepository(private val peopleService: PopularPeopleService) {
-    lateinit var peoplePagedList: LiveData<PagedList<PersonEntity>>
-    lateinit var peopleDataSourceFactory: PeopleDataSourceFactory
+    private lateinit var peoplePagedList: LiveData<PagedList<PersonEntity>>
+    private lateinit var peopleDataSourceFactory: PeopleDataSourceFactory
 
     fun fetchLivaPopularPeoplePageList(compositeDisposable: CompositeDisposable): LiveData<PagedList<PersonEntity>> {
         peopleDataSourceFactory = PeopleDataSourceFactory(peopleService, compositeDisposable)
@@ -28,6 +29,9 @@ class PeoplePagedListRepository(private val peopleService: PopularPeopleService)
         return peoplePagedList
     }
 
+    fun invalidateFactory(){
+        peopleDataSourceFactory.create()
+    }
 
     fun getNetworkState(): LiveData<NetworkState>{
         return Transformations.switchMap<PeopleDataSource, NetworkState>(
