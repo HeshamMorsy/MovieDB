@@ -3,7 +3,7 @@ package moviedb.com.moviedb.data.pojos
 
 import com.google.gson.annotations.SerializedName
 
-data class PersonEntity(
+data class PersonListEntity(
     val adult: Boolean,
     val gender: Int,
     val id: Int,

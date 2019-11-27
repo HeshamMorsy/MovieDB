@@ -15,6 +15,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
+import androidx.paging.PagedList
 import androidx.recyclerview.widget.GridLayoutManager
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -24,6 +25,7 @@ import kotlinx.android.synthetic.main.cell_network_state.*
 import moviedb.com.moviedb.R
 import moviedb.com.moviedb.data.api.PopularPeopleClient
 import moviedb.com.moviedb.data.api.PopularPeopleService
+import moviedb.com.moviedb.data.pojos.PersonListEntity
 import moviedb.com.moviedb.data.repository.NetworkState
 import moviedb.com.moviedb.ui.adapters.PopularPeoplePagedListAdapter
 import moviedb.com.moviedb.ui.views.details.PopularDetailsActivity
@@ -33,78 +35,88 @@ class ListActivity : AppCompatActivity() {
     private lateinit var viewModel: ListViewModel
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
     lateinit var peopleRepository: PeoplePagedListRepository
-    lateinit var peopleAdapter: PopularPeoplePagedListAdapter
+    private lateinit var peopleAdapter: PopularPeoplePagedListAdapter
     var searchView: SearchView? = null
-    var searchMode: Boolean = false
-    var refreshing: Boolean = false
+    private var searchMode: Boolean = false
+    private var refreshing: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_list)
-
-        val popularPeopleService: PopularPeopleService = PopularPeopleClient.getClient()
-        peopleRepository = PeoplePagedListRepository(popularPeopleService,this)
-
-        viewModel = getListViewModel()
-
-        peopleAdapter = PopularPeoplePagedListAdapter(this)
-
+        initComponents()
+        initRecycler()
+        attachListeners()
+        // when user click on celebrities cell
         observeOnOpenDetails()
 
-        val gridLayout = GridLayoutManager(this, 1)
-//        gridLayout.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
-//            override fun getSpanSize(position: Int): Int {
-//                val viewType = peopleAdapter.getItemViewType(position)
-//                return if (viewType == peopleAdapter.PERSON_TYPE) 1
-//                else 1
-//            }
-//        }
+    }
 
-        list_recycler.layoutManager = gridLayout
-        list_recycler.setHasFixedSize(true)
-        list_recycler.adapter = peopleAdapter
-
+    private fun attachListeners() {
         viewModel.peoplePagedList.observe(this, Observer {
-            if (!searchMode) {
-                peopleAdapter.submitList(it)
-                if (swipe_refresh.isRefreshing || refreshing) {
-                    swipe_refresh.isRefreshing = false
-                    refreshing = true
-                    // new paging library has a bug after refreshing
-                    // so I made a workaround to handle it by changing recycler visibility
-                    list_recycler.visibility = View.GONE
-                    Handler().postDelayed({
-                        list_recycler.scrollToPosition(0)
-                        list_recycler.visibility = View.VISIBLE
-                    }, 600)
-                }
-            }
+            handleCelebritiesListing(it)
         })
 
-
-
-
         viewModel.networkState.observe(this, Observer {
-            cell_network_state_progress_bar?.visibility =
-                if (viewModel.listIsEmpty() && it == NetworkState.LOADING) View.VISIBLE else View.GONE
-
-            if (viewModel.listIsEmpty() && it == NetworkState.ERROR) {
-                Toast.makeText(this, it.msg, Toast.LENGTH_SHORT).show()
-                cell_network_state_error_text?.visibility = View.VISIBLE
-            } else
-                cell_network_state_error_text?.visibility = View.GONE
-
-            if (!viewModel.listIsEmpty())
-                peopleAdapter.setNetworkState(it)
+            handlingNetworkStateChanges(it)
         })
 
 
         swipe_refresh.setOnRefreshListener {
-            refreshing = true
-            if (searchView != null && searchView?.query!!.isEmpty())
-                searchMode = false
-            viewModel.refresh()
+            swipeRefreshAction()
         }
+    }
+
+    private fun swipeRefreshAction() {
+        refreshing = true
+        if (searchView != null && searchView?.query!!.isEmpty())
+            searchMode = false
+        viewModel.refresh()
+    }
+
+    private fun handleCelebritiesListing(it: PagedList<PersonListEntity>?) {
+        if (!searchMode) {
+            peopleAdapter.submitList(it)
+            if (swipe_refresh.isRefreshing || refreshing) {
+                swipe_refresh.isRefreshing = false
+                refreshing = true
+                // new paging library has a bug after refreshing
+                // so I made a workaround to handle it by changing recycler visibility
+                list_recycler.visibility = View.GONE
+                Handler().postDelayed({
+                    list_recycler.scrollToPosition(0)
+                    list_recycler.visibility = View.VISIBLE
+                }, 600)
+            }
+        }
+    }
+
+    private fun handlingNetworkStateChanges(it: NetworkState?) {
+        cell_network_state_progress_bar?.visibility =
+            if (viewModel.listIsEmpty() && it == NetworkState.LOADING) View.VISIBLE else View.GONE
+
+        if (viewModel.listIsEmpty() && it == NetworkState.ERROR) {
+            Toast.makeText(this, it.msg, Toast.LENGTH_SHORT).show()
+            cell_network_state_error_text?.visibility = View.VISIBLE
+        } else
+            cell_network_state_error_text?.visibility = View.GONE
+
+        if (!viewModel.listIsEmpty())
+            peopleAdapter.setNetworkState(it!!)
+    }
+
+    private fun initRecycler() {
+        peopleAdapter = PopularPeoplePagedListAdapter(this)
+        val gridLayout = GridLayoutManager(this, 1)
+        list_recycler.layoutManager = gridLayout
+        list_recycler.setHasFixedSize(true)
+        list_recycler.adapter = peopleAdapter
+    }
+
+    private fun initComponents() {
+        val popularPeopleService: PopularPeopleService = PopularPeopleClient.getClient()
+        peopleRepository = PeoplePagedListRepository(popularPeopleService, this)
+
+        viewModel = getListViewModel()
     }
 
     private fun observeOnOpenDetails() {

@@ -4,15 +4,15 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.paging.PagedList
 import io.reactivex.disposables.CompositeDisposable
-import moviedb.com.moviedb.data.pojos.PersonEntity
+import moviedb.com.moviedb.data.pojos.PersonListEntity
 import moviedb.com.moviedb.data.repository.NetworkState
 
 class ListViewModel(private val peopleRepository: PeoplePagedListRepository) : ViewModel() {
     private val compositeDisposable = CompositeDisposable()
-    lateinit var searchPagedList : LiveData<PagedList<PersonEntity>>
+    lateinit var searchPagedList : LiveData<PagedList<PersonListEntity>>
     private lateinit var query:String
 
-    val peoplePagedList : LiveData<PagedList<PersonEntity>> by lazy {
+    val peoplePagedList : LiveData<PagedList<PersonListEntity>> by lazy {
         peopleRepository.fetchLivaPopularPeoplePageList(compositeDisposable)
     }
 

@@ -7,7 +7,7 @@ import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import io.reactivex.disposables.CompositeDisposable
 import moviedb.com.moviedb.data.api.PopularPeopleService
-import moviedb.com.moviedb.data.pojos.PersonEntity
+import moviedb.com.moviedb.data.pojos.PersonListEntity
 import moviedb.com.moviedb.data.repository.NetworkState
 import moviedb.com.moviedb.data.repository.popularList.PeopleDataSource
 import moviedb.com.moviedb.data.repository.popularList.PeopleDataSourceFactory
@@ -15,13 +15,13 @@ import moviedb.com.moviedb.data.repository.search.SearchPeopleDataSourceFactory
 import moviedb.com.moviedb.utilities.Constants.Companion.PER_PAGE
 
 class PeoplePagedListRepository(private val peopleService: PopularPeopleService, private val context: Context) {
-    private lateinit var peoplePagedList: LiveData<PagedList<PersonEntity>>
+    private lateinit var peoplePagedList: LiveData<PagedList<PersonListEntity>>
     private lateinit var peopleDataSourceFactory: PeopleDataSourceFactory
 
-    private lateinit var searchPeoplePagedList: LiveData<PagedList<PersonEntity>>
+    private lateinit var searchPeoplePagedList: LiveData<PagedList<PersonListEntity>>
     private lateinit var searchPeopleDataSourceFactory: SearchPeopleDataSourceFactory
 
-    fun fetchLivaSearchPageList(compositeDisposable: CompositeDisposable,query: String): LiveData<PagedList<PersonEntity>> {
+    fun fetchLivaSearchPageList(compositeDisposable: CompositeDisposable,query: String): LiveData<PagedList<PersonListEntity>> {
         searchPeopleDataSourceFactory =
             SearchPeopleDataSourceFactory(peopleService,context, compositeDisposable, query)
 
@@ -34,7 +34,7 @@ class PeoplePagedListRepository(private val peopleService: PopularPeopleService,
         return searchPeoplePagedList
     }
 
-    fun fetchLivaPopularPeoplePageList(compositeDisposable: CompositeDisposable): LiveData<PagedList<PersonEntity>> {
+    fun fetchLivaPopularPeoplePageList(compositeDisposable: CompositeDisposable): LiveData<PagedList<PersonListEntity>> {
         peopleDataSourceFactory =
             PeopleDataSourceFactory(peopleService,context, compositeDisposable)
 

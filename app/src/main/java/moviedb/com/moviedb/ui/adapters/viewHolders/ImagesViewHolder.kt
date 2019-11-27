@@ -9,7 +9,6 @@ import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.cell_person.view.*
 import moviedb.com.moviedb.R
 import moviedb.com.moviedb.data.pojos.CelebrityImageEntity
-import moviedb.com.moviedb.data.pojos.PersonEntity
 import moviedb.com.moviedb.utilities.Constants
 
 class ImagesViewHolder(view : View) : RecyclerView.ViewHolder(view){

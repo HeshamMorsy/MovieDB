@@ -8,6 +8,7 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 
+/** This interface represents the endpoint apis of celebrities*/
 interface PopularPeopleService {
     @GET("person/popular")
     fun getPopularPeople(@Query("page") page: Int): Single<GetPopularPeopleResponse>

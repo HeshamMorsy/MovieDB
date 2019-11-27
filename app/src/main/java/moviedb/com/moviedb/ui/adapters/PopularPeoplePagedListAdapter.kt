@@ -8,15 +8,14 @@ import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import io.reactivex.subjects.PublishSubject
-import kotlinx.android.synthetic.main.cell_network_state.view.*
 import moviedb.com.moviedb.R
-import moviedb.com.moviedb.data.pojos.PersonEntity
+import moviedb.com.moviedb.data.pojos.PersonListEntity
 import moviedb.com.moviedb.data.repository.NetworkState
 import moviedb.com.moviedb.ui.adapters.viewHolders.NetworkStateViewHolder
 import moviedb.com.moviedb.ui.adapters.viewHolders.PopularPeopleViewHolder
 
 class PopularPeoplePagedListAdapter(val context: Context) :
-    PagedListAdapter<PersonEntity, RecyclerView.ViewHolder>(PopularPeopleDiffCallback()) {
+    PagedListAdapter<PersonListEntity, RecyclerView.ViewHolder>(PopularPeopleDiffCallback()) {
     val PERSON_TYPE = 1
     val NETWORK_TYPE = 2
     private var networkState: NetworkState? = null
@@ -63,12 +62,12 @@ class PopularPeoplePagedListAdapter(val context: Context) :
         }
     }
 
-    class PopularPeopleDiffCallback : DiffUtil.ItemCallback<PersonEntity>() {
-        override fun areItemsTheSame(oldItem: PersonEntity, newItem: PersonEntity): Boolean {
+    class PopularPeopleDiffCallback : DiffUtil.ItemCallback<PersonListEntity>() {
+        override fun areItemsTheSame(oldItem: PersonListEntity, newItem: PersonListEntity): Boolean {
             return oldItem.id == newItem.id
         }
 
-        override fun areContentsTheSame(oldItem: PersonEntity, newItem: PersonEntity): Boolean {
+        override fun areContentsTheSame(oldItem: PersonListEntity, newItem: PersonListEntity): Boolean {
             return oldItem == newItem
         }
 

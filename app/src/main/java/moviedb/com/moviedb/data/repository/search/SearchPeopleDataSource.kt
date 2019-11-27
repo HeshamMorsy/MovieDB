@@ -8,7 +8,7 @@ import androidx.paging.PageKeyedDataSource
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import moviedb.com.moviedb.data.api.PopularPeopleService
-import moviedb.com.moviedb.data.pojos.PersonEntity
+import moviedb.com.moviedb.data.pojos.PersonListEntity
 import moviedb.com.moviedb.data.repository.NetworkState
 import moviedb.com.moviedb.utilities.Constants.Companion.FIRST_PAGE
 
@@ -18,14 +18,14 @@ class SearchPeopleDataSource(private val peopleService: PopularPeopleService,
                              private val context: Context,
                              private val compositeDisposable: CompositeDisposable,
                              private val query: String)
-    : PageKeyedDataSource<Int, PersonEntity>() {
+    : PageKeyedDataSource<Int, PersonListEntity>() {
 
     private val tag : String = SearchPeopleDataSource::class.java.simpleName
     private var page = FIRST_PAGE
     val networkState: MutableLiveData<NetworkState> = MutableLiveData()
 
     /** this method is called when list loaded for first time **/
-    override fun loadInitial(params: LoadInitialParams<Int>, callback: LoadInitialCallback<Int, PersonEntity>) {
+    override fun loadInitial(params: LoadInitialParams<Int>, callback: LoadInitialCallback<Int, PersonListEntity>) {
         networkState.postValue(NetworkState.LOADING)
 
         // perform the api call
@@ -43,7 +43,7 @@ class SearchPeopleDataSource(private val peopleService: PopularPeopleService,
     }
 
     /** this method called when user scrolls down to the end of list **/
-    override fun loadAfter(params: LoadParams<Int>, callback: LoadCallback<Int, PersonEntity>) {
+    override fun loadAfter(params: LoadParams<Int>, callback: LoadCallback<Int, PersonListEntity>) {
         networkState.postValue(NetworkState.LOADING)
 
         // perform the api call
@@ -63,7 +63,7 @@ class SearchPeopleDataSource(private val peopleService: PopularPeopleService,
             })
         )    }
 
-    override fun loadBefore(params: LoadParams<Int>, callback: LoadCallback<Int, PersonEntity>) {
+    override fun loadBefore(params: LoadParams<Int>, callback: LoadCallback<Int, PersonListEntity>) {
 
     }
 
