@@ -10,6 +10,7 @@
             android:id="@+id/cell_person_image"
             android:layout_width="70dp"
             android:layout_height="70dp"
+            tools:src="@drawable/placeholder"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             android:layout_marginStart="10dp"
