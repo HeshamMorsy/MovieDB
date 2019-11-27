@@ -9,7 +9,7 @@ import moviedb.com.moviedb.data.repository.NetworkState
 
 class ListViewModel(private val peopleRepository: PeoplePagedListRepository) : ViewModel() {
     private val compositeDisposable = CompositeDisposable()
-    lateinit var searchPagedList : LiveData<PagedList<PersonListEntity>>
+    var searchPagedList : LiveData<PagedList<PersonListEntity>>? = null
     private lateinit var query:String
 
     val peoplePagedList : LiveData<PagedList<PersonListEntity>> by lazy {
@@ -30,6 +30,7 @@ class ListViewModel(private val peopleRepository: PeoplePagedListRepository) : V
 
     fun refresh(){
         peoplePagedList.value?.dataSource?.invalidate()
+        searchPagedList?.value?.dataSource?.invalidate()
     }
 
     fun listIsEmpty() : Boolean{

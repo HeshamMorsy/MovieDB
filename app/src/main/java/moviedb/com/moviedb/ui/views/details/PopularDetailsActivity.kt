@@ -97,9 +97,13 @@ class PopularDetailsActivity : AppCompatActivity() {
         viewModel.networkState.observe(this, Observer {
             when (it) {
                 NetworkState.LOADING -> {
+                    popular_details_bio_title.visibility = View.GONE
+                    popular_details_photos_title.visibility = View.GONE
                     details_progress.visibility = View.VISIBLE
                 }
                 NetworkState.LOADED -> {
+                    popular_details_bio_title.visibility = View.VISIBLE
+                    popular_details_photos_title.visibility = View.VISIBLE
                     details_progress.visibility = View.GONE
                 }
                 NetworkState.ERROR -> {

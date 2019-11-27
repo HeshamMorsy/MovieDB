@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import android.util.Log
 import android.widget.Toast
 import androidx.paging.PageKeyedDataSource
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import moviedb.com.moviedb.data.api.PopularPeopleService
@@ -31,6 +32,7 @@ class SearchPeopleDataSource(private val peopleService: PopularPeopleService,
         // perform the api call
         compositeDisposable.add(peopleService.searchPopularPeople(page, query)
             .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
                 callback.onResult(it.peopleList, null, page + 1)
                 networkState.postValue(NetworkState.LOADED)
@@ -49,6 +51,7 @@ class SearchPeopleDataSource(private val peopleService: PopularPeopleService,
         // perform the api call
         compositeDisposable.add(peopleService.searchPopularPeople(params.key, query)
             .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
                 if (it.totalPages >= params.key){  // this means there is more data to fetch
                     callback.onResult(it.peopleList,  params.key + 1)

@@ -130,7 +130,7 @@ class ListActivity : AppCompatActivity() {
     }
 
     private fun startSearchObserve() {
-        viewModel.searchPagedList.observe(this, Observer {
+        viewModel.searchPagedList?.observe(this, Observer {
             if (searchMode) {
                 peopleAdapter.submitList(it)
                 if (swipe_refresh.isRefreshing || refreshing) {
@@ -193,8 +193,8 @@ class ListActivity : AppCompatActivity() {
             startSearchObserve()
         } else {
             searchMode = false
-            viewModel.refresh()
             refreshing = true
+            viewModel.refresh()
         }
     }
 

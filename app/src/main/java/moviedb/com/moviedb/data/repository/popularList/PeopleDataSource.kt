@@ -49,6 +49,7 @@ class PeopleDataSource(private val peopleService: PopularPeopleService,private v
         // perform the api call
         compositeDisposable.add(peopleService.getPopularPeople(params.key)
             .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
                 if (it.totalPages >= params.key){  // this means there is more data to fetch
                     callback.onResult(it.peopleList,  params.key + 1)
