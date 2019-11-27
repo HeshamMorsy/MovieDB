@@ -1,5 +1,6 @@
 package moviedb.com.moviedb.data.repository.search
 
+import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.DataSource
 import io.reactivex.disposables.CompositeDisposable
@@ -8,6 +9,7 @@ import moviedb.com.moviedb.data.pojos.PersonEntity
 
 
 class SearchPeopleDataSourceFactory(private val peopleService: PopularPeopleService,
+                                    private val context: Context,
                                     private val compositeDisposable: CompositeDisposable,
                                     private val query: String
 ) : DataSource.Factory<Int, PersonEntity>() {
@@ -16,7 +18,7 @@ class SearchPeopleDataSourceFactory(private val peopleService: PopularPeopleServ
 
     override fun create(): DataSource<Int, PersonEntity> {
         val peopleDataSource =
-            SearchPeopleDataSource(peopleService, compositeDisposable, query)
+            SearchPeopleDataSource(peopleService,context, compositeDisposable, query)
         searchPeopleLivaDataSource.postValue(peopleDataSource)
         return peopleDataSource
     }

@@ -1,6 +1,8 @@
 package moviedb.com.moviedb.ui.views.details
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -17,6 +19,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_popular_details.*
+import kotlinx.android.synthetic.main.fragment_image_preview.*
 import moviedb.com.moviedb.R
 import moviedb.com.moviedb.data.api.PopularPeopleClient
 import moviedb.com.moviedb.data.pojos.CelebrityDetails
@@ -35,6 +38,7 @@ class PopularDetailsActivity : AppCompatActivity() {
     private lateinit var imagesAdapter: ImagesAdapter
     private var movieId: Int? = null
     private lateinit var imagesList: ArrayList<CelebrityImageEntity>
+    private var imageUrl: String? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,24 +48,27 @@ class PopularDetailsActivity : AppCompatActivity() {
         initRecycler()
         initComponents()
         observeOnOpenImageListener()
+        attachListeners()
     }
 
     private fun observeOnOpenImageListener() {
-        compositeDisposable.add(imagesAdapter.openImageListener.subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-                supportFragmentManager.beginTransaction().add(R.id.container,ImagePreviewFragment.newInstance(it))
-                    .addToBackStack(null)
-                    .commit()
-            },{
-                Log.i(tag, it.message +"")
-            }))
+        compositeDisposable.add(
+            imagesAdapter.openImageListener.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    supportFragmentManager.beginTransaction().add(R.id.container, ImagePreviewFragment.newInstance(it))
+                        .addToBackStack(null)
+                        .commit()
+                }, {
+                    Log.i(tag, it.message + "")
+                })
+        )
     }
 
     private fun initRecycler() {
         imagesList = ArrayList()
-        val gridLayout = GridLayoutManager(this,4)
-        imagesAdapter = ImagesAdapter(imagesList,this)
+        val gridLayout = GridLayoutManager(this, 4)
+        imagesAdapter = ImagesAdapter(imagesList, this)
         popular_details_recycler.layoutManager = gridLayout
         popular_details_recycler.adapter = imagesAdapter
         popular_details_recycler.setHasFixedSize(true)
@@ -69,10 +76,17 @@ class PopularDetailsActivity : AppCompatActivity() {
 
     private fun initComponents() {
         val peopleService = PopularPeopleClient.getClient()
-        detailsRepository = DetailsRepository(peopleService)
+        detailsRepository = DetailsRepository(peopleService,this)
         viewModel = getDetailsViewModel()
+    }
+
+    private fun attachListeners() {
+        popular_details_image.setOnClickListener {
+            imagesAdapter.openImageListener.onNext(imageUrl!!)
+        }
 
         viewModel.details.observe(this, Observer {
+            imageUrl = Constants.IMAGE_BASE_URL + Constants.IMAGE_ORIGINAL_SIZE + it?.profilePath
             fillViews(it)
         })
 
@@ -80,18 +94,22 @@ class PopularDetailsActivity : AppCompatActivity() {
             addImagesToAdapter(it)
         })
 
-
         viewModel.networkState.observe(this, Observer {
-            when(it){
-                NetworkState.LOADING ->{details_progress.visibility = View.VISIBLE}
-                NetworkState.LOADED ->{details_progress.visibility = View.GONE}
-                NetworkState.ERROR ->{
-                    Toast.makeText(this,it.msg,Toast.LENGTH_SHORT).show()
-                    details_progress.visibility = View.GONE}
+            when (it) {
+                NetworkState.LOADING -> {
+                    details_progress.visibility = View.VISIBLE
+                }
+                NetworkState.LOADED -> {
+                    details_progress.visibility = View.GONE
+                }
+                NetworkState.ERROR -> {
+                    Toast.makeText(this, it.msg, Toast.LENGTH_SHORT).show()
+                    details_progress.visibility = View.GONE
+                }
             }
         })
-
     }
+
 
     private fun addImagesToAdapter(it: GetImagesResponse?) {
         imagesList.clear()
@@ -110,7 +128,8 @@ class PopularDetailsActivity : AppCompatActivity() {
         popular_details_biography.text = details?.biography
 
         Glide.with(this).load(Constants.IMAGE_BASE_URL + Constants.IMAGE_LIST_SIZE + details?.profilePath).apply(
-            RequestOptions()/*.placeholder(R.drawable.placeholder)*/.override(120,120))
+            RequestOptions()/*.placeholder(R.drawable.placeholder)*/.override(120, 120)
+        )
             .into(popular_details_image)
     }
 
@@ -129,6 +148,14 @@ class PopularDetailsActivity : AppCompatActivity() {
             }
         })[DetailsViewModel::class.java]
     }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (permissions[0] == Manifest.permission.WRITE_EXTERNAL_STORAGE && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            save_image.performClick()
+        }
+    }
+
 
     /** disposing composite disposable **/
     override fun onDestroy() {

@@ -43,7 +43,7 @@ class ListActivity : AppCompatActivity() {
         setContentView(R.layout.activity_list)
 
         val popularPeopleService: PopularPeopleService = PopularPeopleClient.getClient()
-        peopleRepository = PeoplePagedListRepository(popularPeopleService)
+        peopleRepository = PeoplePagedListRepository(popularPeopleService,this)
 
         viewModel = getListViewModel()
 

@@ -1,7 +1,9 @@
 package moviedb.com.moviedb.data.repository.search
 
+import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import android.util.Log
+import android.widget.Toast
 import androidx.paging.PageKeyedDataSource
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -13,6 +15,7 @@ import moviedb.com.moviedb.utilities.Constants.Companion.FIRST_PAGE
 
 /** using android paging library to fetch data */
 class SearchPeopleDataSource(private val peopleService: PopularPeopleService,
+                             private val context: Context,
                              private val compositeDisposable: CompositeDisposable,
                              private val query: String)
     : PageKeyedDataSource<Int, PersonEntity>() {
@@ -32,6 +35,7 @@ class SearchPeopleDataSource(private val peopleService: PopularPeopleService,
                 callback.onResult(it.peopleList, null, page + 1)
                 networkState.postValue(NetworkState.LOADED)
             }, {
+                Toast.makeText(context,it.message+"", Toast.LENGTH_SHORT).show()
                 networkState.postValue(NetworkState.LOADED)
                 Log.e(tag,it.message)
             })
@@ -53,6 +57,7 @@ class SearchPeopleDataSource(private val peopleService: PopularPeopleService,
                     networkState.postValue(NetworkState.END_OF_LIST)
                 }
             }, {
+                Toast.makeText(context,it.message+"", Toast.LENGTH_SHORT).show()
                 networkState.postValue(NetworkState.LOADED)
                 Log.e(tag,it.message)
             })

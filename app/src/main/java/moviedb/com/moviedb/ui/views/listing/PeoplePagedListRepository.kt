@@ -1,5 +1,6 @@
 package moviedb.com.moviedb.ui.views.listing
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
 import androidx.paging.LivePagedListBuilder
@@ -13,7 +14,7 @@ import moviedb.com.moviedb.data.repository.popularList.PeopleDataSourceFactory
 import moviedb.com.moviedb.data.repository.search.SearchPeopleDataSourceFactory
 import moviedb.com.moviedb.utilities.Constants.Companion.PER_PAGE
 
-class PeoplePagedListRepository(private val peopleService: PopularPeopleService) {
+class PeoplePagedListRepository(private val peopleService: PopularPeopleService, private val context: Context) {
     private lateinit var peoplePagedList: LiveData<PagedList<PersonEntity>>
     private lateinit var peopleDataSourceFactory: PeopleDataSourceFactory
 
@@ -22,7 +23,7 @@ class PeoplePagedListRepository(private val peopleService: PopularPeopleService)
 
     fun fetchLivaSearchPageList(compositeDisposable: CompositeDisposable,query: String): LiveData<PagedList<PersonEntity>> {
         searchPeopleDataSourceFactory =
-            SearchPeopleDataSourceFactory(peopleService, compositeDisposable, query)
+            SearchPeopleDataSourceFactory(peopleService,context, compositeDisposable, query)
 
         val config = PagedList.Config.Builder()
             .setEnablePlaceholders(false)
@@ -35,7 +36,7 @@ class PeoplePagedListRepository(private val peopleService: PopularPeopleService)
 
     fun fetchLivaPopularPeoplePageList(compositeDisposable: CompositeDisposable): LiveData<PagedList<PersonEntity>> {
         peopleDataSourceFactory =
-            PeopleDataSourceFactory(peopleService, compositeDisposable)
+            PeopleDataSourceFactory(peopleService,context, compositeDisposable)
 
         val config = PagedList.Config.Builder()
             .setEnablePlaceholders(false)

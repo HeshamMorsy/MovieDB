@@ -1,6 +1,8 @@
 package moviedb.com.moviedb.data.repository.details
 
+import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -12,7 +14,7 @@ import moviedb.com.moviedb.data.repository.NetworkState
 import moviedb.com.moviedb.models.responses.GetImagesResponse
 import java.lang.Exception
 
-class CelebrityDetailsDataSource(private val peopleService: PopularPeopleService, private val compositeDisposable: CompositeDisposable)
+class CelebrityDetailsDataSource(private val peopleService: PopularPeopleService,private val context: Context,private val compositeDisposable: CompositeDisposable)
 
 {
     private  val tag = CelebrityDetailsDataSource::class.java.simpleName
@@ -43,6 +45,7 @@ class CelebrityDetailsDataSource(private val peopleService: PopularPeopleService
                         pNetworkState.postValue(NetworkState.LOADED)
                     }, {
                         pNetworkState.postValue(NetworkState.ERROR)
+                        Toast.makeText(context,it.message+"", Toast.LENGTH_SHORT).show()
                         Log.e(tag,it.message+"")
                     })
             )
@@ -65,6 +68,7 @@ class CelebrityDetailsDataSource(private val peopleService: PopularPeopleService
                         pNetworkState.postValue(NetworkState.LOADED)
                     }, {
                         pNetworkState.postValue(NetworkState.ERROR)
+                        Toast.makeText(context,it.message+"", Toast.LENGTH_SHORT).show()
                         Log.e(tag,it.message+"")
                     })
             )

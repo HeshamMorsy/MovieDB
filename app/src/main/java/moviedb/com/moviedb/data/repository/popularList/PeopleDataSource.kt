@@ -1,8 +1,11 @@
 package moviedb.com.moviedb.data.repository.popularList
 
+import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import android.util.Log
+import android.widget.Toast
 import androidx.paging.PageKeyedDataSource
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import moviedb.com.moviedb.data.api.PopularPeopleService
@@ -13,7 +16,7 @@ import moviedb.com.moviedb.utilities.Constants.Companion.FIRST_PAGE
 
 
 /** using android paging library to fetch data */
-class PeopleDataSource(private val peopleService: PopularPeopleService, private val compositeDisposable: CompositeDisposable)
+class PeopleDataSource(private val peopleService: PopularPeopleService,private val context: Context , private val compositeDisposable: CompositeDisposable)
     : PageKeyedDataSource<Int, PersonEntity>() {
 
     private val tag : String = SearchPeopleDataSource::class.java.simpleName
@@ -27,10 +30,12 @@ class PeopleDataSource(private val peopleService: PopularPeopleService, private 
         // perform the api call
         compositeDisposable.add(peopleService.getPopularPeople(page)
             .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
                 callback.onResult(it.peopleList, null, page + 1)
                 networkState.postValue(NetworkState.LOADED)
             }, {
+                Toast.makeText(context,it.message+"", Toast.LENGTH_SHORT).show()
                 networkState.postValue(NetworkState.LOADED)
                 Log.e(tag,it.message)
             })
@@ -52,6 +57,7 @@ class PeopleDataSource(private val peopleService: PopularPeopleService, private 
                     networkState.postValue(NetworkState.END_OF_LIST)
                 }
             }, {
+                Toast.makeText(context,it.message+"", Toast.LENGTH_SHORT).show()
                 networkState.postValue(NetworkState.LOADED)
                 Log.e(tag,it.message)
             })

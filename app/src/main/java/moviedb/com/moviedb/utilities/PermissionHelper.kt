@@ -8,12 +8,14 @@ import androidx.core.app.ActivityCompat
 import android.content.pm.PackageManager
 import android.app.Activity
 import android.content.Context
+import androidx.fragment.app.Fragment
+import moviedb.com.moviedb.ui.views.details.fragments.ImagePreviewFragment
 import moviedb.com.moviedb.utilities.Constants.Companion.EXTERNAL_PERMISSION_CODE
 
 
 class PermissionHelper {
     companion object {
-        fun checkExternalStoragePermission(mActivity: Activity, mContext: Context): Boolean {
+        fun checkExternalStoragePermission(mActivity: Activity, mContext: Context, fragment: Fragment): Boolean {
             var isGranted = false
             try {
                 if (ActivityCompat.checkSelfPermission(

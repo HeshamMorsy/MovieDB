@@ -4,18 +4,28 @@ package moviedb.com.moviedb.ui.views.details.fragments
 import android.Manifest
 import android.app.Activity
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.Target
 import kotlinx.android.synthetic.main.fragment_image_preview.*
 import moviedb.com.moviedb.R
+import moviedb.com.moviedb.utilities.Constants
 import moviedb.com.moviedb.utilities.PermissionHelper
-import java.lang.Exception
+import java.util.*
+import kotlin.collections.ArrayList
+
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -55,14 +65,53 @@ class ImagePreviewFragment : Fragment() {
 
     private fun saveImageAction() {
         save_image.setOnClickListener {
-            val isGranted = PermissionHelper.checkExternalStoragePermission(activity as Activity, context!!)
+            val isGranted = PermissionHelper.checkExternalStoragePermission(activity as Activity, context!!,this)
             if (isGranted)
                 performSaving()
         }
     }
 
     private fun performSaving() {
+        Glide.with(context!!)
+            .asBitmap()
+            .load(imageUrl)
+            .listener(object : RequestListener<Bitmap> {
+                override fun onResourceReady(
+                    resource: Bitmap?,
+                    model: Any?,
+                    target: Target<Bitmap>?,
+                    dataSource: DataSource?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    val title = "${Calendar.getInstance().timeInMillis}.png"
+                    val s = MediaStore.Images.Media.insertImage(
+                        context?.contentResolver, resource, title, "image"
+                    )
+                        if (s != null && s.isNotEmpty()) {
+                            Toast.makeText(
+                                context,
+                                context?.resources?.getString(R.string.saved_successfully),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        } else
+                            Toast.makeText(
+                                context,
+                                context?.resources?.getString(R.string.saving_failed),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                    return false
+                }
 
+                override fun onLoadFailed(
+                    e: GlideException?,
+                    model: Any?,
+                    target: Target<Bitmap>?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    Log.i(tag,e?.message+"")
+                    return false
+                }
+            }).submit()
     }
 
 
@@ -83,7 +132,7 @@ class ImagePreviewFragment : Fragment() {
         if (permissions[0] == Manifest.permission.WRITE_EXTERNAL_STORAGE && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             performSaving()
         } else {
-//            requestPermissions( <String>{Manifest.permission.WRITE_EXTERNAL_STORAGE}, Constants.EXTERNAL_PERMISSION_CODE);
+            requestPermissions( arrayOf (Manifest.permission.WRITE_EXTERNAL_STORAGE), Constants.EXTERNAL_PERMISSION_CODE);
         }
     }
 
