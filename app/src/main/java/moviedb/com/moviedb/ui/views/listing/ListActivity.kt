@@ -2,6 +2,7 @@ package moviedb.com.moviedb.ui.views.listing
 
 import android.app.SearchManager
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.view.Menu
@@ -15,6 +16,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_list.*
 import kotlinx.android.synthetic.main.cell_network_state.*
 import moviedb.com.moviedb.R
@@ -22,9 +26,12 @@ import moviedb.com.moviedb.data.api.PopularPeopleClient
 import moviedb.com.moviedb.data.api.PopularPeopleService
 import moviedb.com.moviedb.data.repository.NetworkState
 import moviedb.com.moviedb.ui.adapters.PopularPeoplePagedListAdapter
+import moviedb.com.moviedb.ui.views.details.PopularDetailsActivity
+import moviedb.com.moviedb.utilities.Constants
 
 class ListActivity : AppCompatActivity() {
     private lateinit var viewModel: ListViewModel
+    private val compositeDisposable: CompositeDisposable = CompositeDisposable()
     lateinit var peopleRepository: PeoplePagedListRepository
     lateinit var peopleAdapter: PopularPeoplePagedListAdapter
     var searchView: SearchView? = null
@@ -41,6 +48,9 @@ class ListActivity : AppCompatActivity() {
         viewModel = getListViewModel()
 
         peopleAdapter = PopularPeoplePagedListAdapter(this)
+
+        observeOnOpenDetails()
+
         val gridLayout = GridLayoutManager(this, 1)
 //        gridLayout.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
 //            override fun getSpanSize(position: Int): Int {
@@ -91,6 +101,16 @@ class ListActivity : AppCompatActivity() {
                 searchMode = false
             viewModel.refresh()
         }
+    }
+
+    private fun observeOnOpenDetails() {
+        compositeDisposable.add(peopleAdapter.openDetailsPublisher.subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe{
+                val mIntent = Intent(this,PopularDetailsActivity::class.java)
+                mIntent.putExtra(Constants.CELEBRITY_ID, it)
+                startActivity(mIntent)
+            })
     }
 
     private fun startSearchObserve() {
@@ -160,5 +180,12 @@ class ListActivity : AppCompatActivity() {
             viewModel.refresh()
             refreshing = true
         }
+    }
+
+
+    /** dispose compositeDisposable to avoid memory leak **/
+    override fun onDestroy() {
+        super.onDestroy()
+        compositeDisposable.dispose()
     }
 }

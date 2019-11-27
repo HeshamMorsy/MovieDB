@@ -11,7 +11,7 @@ import moviedb.com.moviedb.data.repository.NetworkState
 import moviedb.com.moviedb.data.repository.popularList.PeopleDataSource
 import moviedb.com.moviedb.data.repository.popularList.PeopleDataSourceFactory
 import moviedb.com.moviedb.data.repository.search.SearchPeopleDataSourceFactory
-import moviedb.com.moviedb.utilities.network.Constants.Companion.PER_PAGE
+import moviedb.com.moviedb.utilities.Constants.Companion.PER_PAGE
 
 class PeoplePagedListRepository(private val peopleService: PopularPeopleService) {
     private lateinit var peoplePagedList: LiveData<PagedList<PersonEntity>>

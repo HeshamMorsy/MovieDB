@@ -76,4 +76,7 @@ dependencies {
 
     // circular image library
     implementation 'de.hdodenhof:circleimageview:2.2.0'
+
+    // rounded corners image
+    implementation 'com.joooonho:selectableroundedimageview:1.0.1'
 }

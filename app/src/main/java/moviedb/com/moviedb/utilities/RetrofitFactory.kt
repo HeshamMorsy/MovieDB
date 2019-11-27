@@ -1,4 +1,4 @@
-package moviedb.com.moviedb.utilities.network
+package moviedb.com.moviedb.utilities
 
 import moviedb.com.moviedb.BuildConfig
 import okhttp3.OkHttpClient

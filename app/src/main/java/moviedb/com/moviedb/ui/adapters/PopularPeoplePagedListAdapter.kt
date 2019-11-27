@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.cell_network_state.view.*
 import moviedb.com.moviedb.R
 import moviedb.com.moviedb.data.pojos.PersonEntity
@@ -19,6 +20,8 @@ class PopularPeoplePagedListAdapter(val context: Context) :
     val PERSON_TYPE = 1
     val NETWORK_TYPE = 2
     private var networkState: NetworkState? = null
+
+    val openDetailsPublisher: PublishSubject<Int> = PublishSubject.create()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
@@ -35,7 +38,7 @@ class PopularPeoplePagedListAdapter(val context: Context) :
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (getItemViewType(position) == PERSON_TYPE) {
-            (holder as PopularPeopleViewHolder).bind(getItem(position), context)
+            (holder as PopularPeopleViewHolder).bind(getItem(position), context, openDetailsPublisher)
         } else {
             (holder as NetworkStateViewHolder).bind(networkState)
         }

@@ -1,4 +1,4 @@
-package moviedb.com.moviedb.utilities.network
+package moviedb.com.moviedb.utilities
 
 class Constants {
     companion object {
@@ -14,6 +14,7 @@ class Constants {
         const val IMAGE_BASE_URL = "https://image.tmdb.org/t/p/"
         const val IMAGE_ORIGINAL_SIZE = "original"
         const val IMAGE_LIST_SIZE = "w92"
+        const val CELEBRITY_ID = "celebrity_id"
 
     }
 }
