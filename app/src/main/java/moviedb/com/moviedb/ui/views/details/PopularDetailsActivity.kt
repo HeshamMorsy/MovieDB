@@ -2,6 +2,7 @@ package moviedb.com.moviedb.ui.views.details
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -12,6 +13,9 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_popular_details.*
 import moviedb.com.moviedb.R
 import moviedb.com.moviedb.data.api.PopularPeopleClient
@@ -20,9 +24,12 @@ import moviedb.com.moviedb.data.pojos.CelebrityImageEntity
 import moviedb.com.moviedb.data.repository.NetworkState
 import moviedb.com.moviedb.models.responses.GetImagesResponse
 import moviedb.com.moviedb.ui.adapters.ImagesAdapter
+import moviedb.com.moviedb.ui.views.details.fragments.ImagePreviewFragment
 import moviedb.com.moviedb.utilities.Constants
 
 class PopularDetailsActivity : AppCompatActivity() {
+    private val tag = PopularDetailsActivity::class.java.simpleName
+    private val compositeDisposable: CompositeDisposable = CompositeDisposable()
     private lateinit var viewModel: DetailsViewModel
     private lateinit var detailsRepository: DetailsRepository
     private lateinit var imagesAdapter: ImagesAdapter
@@ -33,14 +40,22 @@ class PopularDetailsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_popular_details)
-        getMovieId()
+        getCelebrityId()
         initRecycler()
         initComponents()
         observeOnOpenImageListener()
     }
 
     private fun observeOnOpenImageListener() {
-
+        compositeDisposable.add(imagesAdapter.openImageListener.subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                supportFragmentManager.beginTransaction().add(R.id.container,ImagePreviewFragment.newInstance(it))
+                    .addToBackStack(null)
+                    .commit()
+            },{
+                Log.i(tag, it.message +"")
+            }))
     }
 
     private fun initRecycler() {
@@ -99,11 +114,13 @@ class PopularDetailsActivity : AppCompatActivity() {
             .into(popular_details_image)
     }
 
-    private fun getMovieId() {
+
+    private fun getCelebrityId() {
         val mIntent = intent
         movieId = mIntent.extras?.getInt(Constants.CELEBRITY_ID)
     }
 
+    /** method to get instance of DetailsViewModel**/
     private fun getDetailsViewModel(): DetailsViewModel {
         return ViewModelProviders.of(this, object : ViewModelProvider.Factory {
             override fun <T : ViewModel?> create(modelClass: Class<T>): T {
@@ -111,6 +128,12 @@ class PopularDetailsActivity : AppCompatActivity() {
                 return DetailsViewModel(detailsRepository, movieId!!) as T
             }
         })[DetailsViewModel::class.java]
+    }
+
+    /** disposing composite disposable **/
+    override fun onDestroy() {
+        super.onDestroy()
+        compositeDisposable.dispose()
     }
 
 }

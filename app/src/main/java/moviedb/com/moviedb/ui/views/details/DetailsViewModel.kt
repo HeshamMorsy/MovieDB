@@ -7,16 +7,16 @@ import moviedb.com.moviedb.data.pojos.CelebrityDetails
 import moviedb.com.moviedb.data.repository.NetworkState
 import moviedb.com.moviedb.models.responses.GetImagesResponse
 
-class DetailsViewModel (private val detailsRepository: DetailsRepository, movieId: Int) : ViewModel() {
+class DetailsViewModel (private val detailsRepository: DetailsRepository, personID: Int) : ViewModel() {
 
     private val compositeDisposable = CompositeDisposable()
 
     val details: LiveData<CelebrityDetails> by lazy {
-        detailsRepository.fetchDetails(compositeDisposable,movieId)
+        detailsRepository.fetchDetails(compositeDisposable,personID)
     }
 
     val images: LiveData<GetImagesResponse> by lazy {
-        detailsRepository.fetchImages(compositeDisposable,movieId)
+        detailsRepository.fetchImages(compositeDisposable,personID)
     }
 
 

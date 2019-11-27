@@ -15,6 +15,7 @@ class Constants {
         const val IMAGE_ORIGINAL_SIZE = "original"
         const val IMAGE_LIST_SIZE = "w92"
         const val CELEBRITY_ID = "celebrity_id"
+        const val EXTERNAL_PERMISSION_CODE = 1
 
     }
 }
