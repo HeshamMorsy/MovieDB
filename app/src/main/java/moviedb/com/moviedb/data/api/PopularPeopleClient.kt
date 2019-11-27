@@ -1,7 +1,7 @@
 package moviedb.com.moviedb.data.api
 
 import moviedb.com.moviedb.BuildConfig
-import moviedb.com.moviedb.utilities.network.Constants
+import moviedb.com.moviedb.utilities.Constants
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit

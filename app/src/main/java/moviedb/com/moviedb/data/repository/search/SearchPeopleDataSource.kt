@@ -8,7 +8,7 @@ import io.reactivex.schedulers.Schedulers
 import moviedb.com.moviedb.data.api.PopularPeopleService
 import moviedb.com.moviedb.data.pojos.PersonEntity
 import moviedb.com.moviedb.data.repository.NetworkState
-import moviedb.com.moviedb.utilities.network.Constants.Companion.FIRST_PAGE
+import moviedb.com.moviedb.utilities.Constants.Companion.FIRST_PAGE
 
 
 /** using android paging library to fetch data */

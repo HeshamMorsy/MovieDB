@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">MovieDb</string>
+    <string name="bio">*Bio:</string>
+    <string name="photos">*Photos</string>
+    <string name="male">Male</string>
+    <string name="female">Female</string>
 </resources>

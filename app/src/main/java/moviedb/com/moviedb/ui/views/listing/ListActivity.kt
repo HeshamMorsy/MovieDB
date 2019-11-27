@@ -87,8 +87,12 @@ class ListActivity : AppCompatActivity() {
         viewModel.networkState.observe(this, Observer {
             cell_network_state_progress_bar?.visibility =
                 if (viewModel.listIsEmpty() && it == NetworkState.LOADING) View.VISIBLE else View.GONE
-            cell_network_state_error_text?.visibility =
-                if (viewModel.listIsEmpty() && it == NetworkState.ERROR) View.VISIBLE else View.GONE
+
+            if (viewModel.listIsEmpty() && it == NetworkState.ERROR) {
+                Toast.makeText(this, it.msg, Toast.LENGTH_SHORT).show()
+                cell_network_state_error_text?.visibility = View.VISIBLE
+            } else
+                cell_network_state_error_text?.visibility = View.GONE
 
             if (!viewModel.listIsEmpty())
                 peopleAdapter.setNetworkState(it)
@@ -106,8 +110,8 @@ class ListActivity : AppCompatActivity() {
     private fun observeOnOpenDetails() {
         compositeDisposable.add(peopleAdapter.openDetailsPublisher.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe{
-                val mIntent = Intent(this,PopularDetailsActivity::class.java)
+            .subscribe {
+                val mIntent = Intent(this, PopularDetailsActivity::class.java)
                 mIntent.putExtra(Constants.CELEBRITY_ID, it)
                 startActivity(mIntent)
             })

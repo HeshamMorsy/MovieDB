@@ -1,0 +1,49 @@
+package moviedb.com.moviedb.data.repository.details
+
+import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
+import moviedb.com.moviedb.data.api.PopularPeopleService
+import moviedb.com.moviedb.data.pojos.CelebrityDetails
+import moviedb.com.moviedb.data.repository.NetworkState
+import java.lang.Exception
+
+class CelebrityDetailsDataSource(private val peopleService: PopularPeopleService, private val compositeDisposable: CompositeDisposable)
+
+{
+    private  val tag = CelebrityDetailsDataSource::class.java.simpleName
+    private val pNetworkState = MutableLiveData<NetworkState>()
+    val networkState: LiveData<NetworkState>
+        get() = pNetworkState
+
+    private val pDownloadedDetailsResponse = MutableLiveData<CelebrityDetails>()
+    val downloadedDetailsResponse: LiveData<CelebrityDetails>
+        get() = pDownloadedDetailsResponse
+
+
+    fun fetchDetails(personId: Int) {
+        pNetworkState.postValue(NetworkState.LOADING)
+
+        try {
+            compositeDisposable.add(
+                peopleService.getCelebrityDetails(personId).subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe({
+                        pDownloadedDetailsResponse.postValue(it)
+                        pNetworkState.postValue(NetworkState.LOADED)
+                    }, {
+                        pNetworkState.postValue(NetworkState.ERROR)
+                        Log.e(tag,it.message+"")
+                    })
+            )
+
+        } catch (e: Exception) {
+            Log.e(tag,e.message+"")
+        }
+
+    }
+
+}
