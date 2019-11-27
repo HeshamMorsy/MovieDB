@@ -1,4 +1,4 @@
-package moviedb.com.moviedb.data.repository
+package moviedb.com.moviedb.data.repository.popularList
 
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.DataSource
@@ -13,7 +13,8 @@ class PeopleDataSourceFactory (private val peopleService: PopularPeopleService, 
     val peopleLivaDataSource = MutableLiveData<PeopleDataSource>()
 
     override fun create(): DataSource<Int, PersonEntity> {
-        val peopleDataSource = PeopleDataSource(peopleService, compositeDisposable)
+        val peopleDataSource =
+            PeopleDataSource(peopleService, compositeDisposable)
         peopleLivaDataSource.postValue(peopleDataSource)
         return peopleDataSource
     }

@@ -1,4 +1,4 @@
-package moviedb.com.moviedb.data.repository
+package moviedb.com.moviedb.data.repository.popularList
 
 import androidx.lifecycle.MutableLiveData
 import android.util.Log
@@ -7,6 +7,8 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import moviedb.com.moviedb.data.api.PopularPeopleService
 import moviedb.com.moviedb.data.pojos.PersonEntity
+import moviedb.com.moviedb.data.repository.NetworkState
+import moviedb.com.moviedb.data.repository.search.SearchPeopleDataSource
 import moviedb.com.moviedb.utilities.network.Constants.Companion.FIRST_PAGE
 
 
@@ -14,7 +16,7 @@ import moviedb.com.moviedb.utilities.network.Constants.Companion.FIRST_PAGE
 class PeopleDataSource(private val peopleService: PopularPeopleService, private val compositeDisposable: CompositeDisposable)
     : PageKeyedDataSource<Int, PersonEntity>() {
 
-    private val tag : String = PeopleDataSource::class.java.simpleName
+    private val tag : String = SearchPeopleDataSource::class.java.simpleName
     private var page = FIRST_PAGE
     val networkState: MutableLiveData<NetworkState> = MutableLiveData()
 

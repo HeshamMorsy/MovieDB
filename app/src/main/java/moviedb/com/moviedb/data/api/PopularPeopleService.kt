@@ -8,4 +8,9 @@ import retrofit2.http.Query
 interface PopularPeopleService {
     @GET("person/popular")
     fun getPopularPeople(@Query("page") page: Int): Single<GetPopularPeopleResponse>
+
+    @GET("search/person")
+    fun searchPopularPeople(@Query("page") page: Int, @Query("query") query: String): Single<GetPopularPeopleResponse>
+
+
 }
