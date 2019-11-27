@@ -5,7 +5,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
-    <com.joooonho.SelectableRoundedImageView
+    <ImageView
             android:id="@+id/cell_celebrity_image"
             android:layout_width="50dp"
             android:layout_height="50dp"

@@ -8,6 +8,7 @@ import moviedb.com.moviedb.data.pojos.CelebrityDetails
 import moviedb.com.moviedb.data.repository.NetworkState
 import moviedb.com.moviedb.data.repository.details.CelebrityDetailsDataSource
 import moviedb.com.moviedb.data.repository.popularList.PeopleDataSource
+import moviedb.com.moviedb.models.responses.GetImagesResponse
 
 class DetailsRepository (private val peopleService: PopularPeopleService) {
 
@@ -18,6 +19,16 @@ class DetailsRepository (private val peopleService: PopularPeopleService) {
         detailsDataSource.fetchDetails(movieId)
         return detailsDataSource.downloadedDetailsResponse
     }
+
+
+    fun fetchImages(compositeDisposable: CompositeDisposable, movieId: Int): LiveData<GetImagesResponse> {
+        detailsDataSource = CelebrityDetailsDataSource(peopleService, compositeDisposable)
+        detailsDataSource.fetchImages(movieId)
+        return detailsDataSource.ImagesResponse
+    }
+
+
+
 
     fun getNetworkState(): LiveData<NetworkState> {
         return detailsDataSource.networkState

@@ -9,6 +9,7 @@ import io.reactivex.schedulers.Schedulers
 import moviedb.com.moviedb.data.api.PopularPeopleService
 import moviedb.com.moviedb.data.pojos.CelebrityDetails
 import moviedb.com.moviedb.data.repository.NetworkState
+import moviedb.com.moviedb.models.responses.GetImagesResponse
 import java.lang.Exception
 
 class CelebrityDetailsDataSource(private val peopleService: PopularPeopleService, private val compositeDisposable: CompositeDisposable)
@@ -22,6 +23,12 @@ class CelebrityDetailsDataSource(private val peopleService: PopularPeopleService
     private val pDownloadedDetailsResponse = MutableLiveData<CelebrityDetails>()
     val downloadedDetailsResponse: LiveData<CelebrityDetails>
         get() = pDownloadedDetailsResponse
+
+    private val pImagesResponse= MutableLiveData<GetImagesResponse>()
+    val ImagesResponse: LiveData<GetImagesResponse>
+        get() = pImagesResponse
+
+
 
 
     fun fetchDetails(personId: Int) {
@@ -45,5 +52,29 @@ class CelebrityDetailsDataSource(private val peopleService: PopularPeopleService
         }
 
     }
+
+    fun fetchImages(personId: Int) {
+        pNetworkState.postValue(NetworkState.LOADING)
+
+        try {
+            compositeDisposable.add(
+                peopleService.getCelebrityImages(personId).subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe({
+                        pImagesResponse.postValue(it)
+                        pNetworkState.postValue(NetworkState.LOADED)
+                    }, {
+                        pNetworkState.postValue(NetworkState.ERROR)
+                        Log.e(tag,it.message+"")
+                    })
+            )
+
+        } catch (e: Exception) {
+            Log.e(tag,e.message+"")
+        }
+
+    }
+
+
 
 }

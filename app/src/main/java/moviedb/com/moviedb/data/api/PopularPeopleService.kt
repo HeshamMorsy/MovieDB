@@ -2,6 +2,7 @@ package moviedb.com.moviedb.data.api
 
 import io.reactivex.Single
 import moviedb.com.moviedb.data.pojos.CelebrityDetails
+import moviedb.com.moviedb.models.responses.GetImagesResponse
 import moviedb.com.moviedb.models.responses.GetPopularPeopleResponse
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -18,7 +19,7 @@ interface PopularPeopleService {
     fun getCelebrityDetails(@Path("person_id") id: Int): Single<CelebrityDetails>
 
     @GET("person/{person_id}/images")
-    fun getCelebrityImages(@Path("person_id") id: Int): Single<CelebrityDetails>
+    fun getCelebrityImages(@Path("person_id") id: Int): Single<GetImagesResponse>
 
 
 
